@@ -1,11 +1,19 @@
 'use client';
 
 import { useGeneratorStore } from '@/stores/generatorStore';
-import { useAuthStore } from '@/stores/authStore';
-import { streamGenerate } from '@/lib/streamGenerate';
 import { applyConfidentialMode } from '@/lib/confidentialMode';
+import { MOCK_GENERATED_TEXT } from '@/lib/mockData';
 import type { GeneratorConfig } from '@/types/generator.types';
 import { toast } from 'sonner';
+
+/** Simulates streaming by yielding one word at a time */
+async function* mockStream(text: string): AsyncIterable<string> {
+  const words = text.split(' ');
+  for (const word of words) {
+    yield word + ' ';
+    await new Promise((r) => setTimeout(r, 30 + Math.random() * 40));
+  }
+}
 
 export function useGenerate(config: GeneratorConfig) {
   const {
@@ -16,29 +24,25 @@ export function useGenerate(config: GeneratorConfig) {
     setIsGenerating,
   } = useGeneratorStore();
 
-  const token = useAuthStore((s) => s.token);
-
   const generate = async () => {
-    if (!token) {
-      toast.error('Please log in to generate documents');
-      return;
-    }
-
     clearOutput();
     setIsGenerating(true);
 
-    const payload = isConfidentialMode
-      ? applyConfidentialMode(formData, config.confidentialFields)
-      : formData;
+    // Apply confidential mode if on (still works client-side)
+    if (isConfidentialMode) {
+      applyConfidentialMode(formData, config.confidentialFields);
+    }
 
     try {
-      for await (const chunk of streamGenerate(config.id, payload, token)) {
+      const mockText =
+        MOCK_GENERATED_TEXT[config.id] ||
+        `This is a sample ${config.title} document generated in demo mode. Connect the backend to generate real AI-powered diplomatic documents tailored to your inputs.`;
+
+      for await (const chunk of mockStream(mockText)) {
         appendOutput(chunk);
       }
-    } catch (err) {
-      const message = err instanceof Error ? err.message : 'Generation failed';
-      toast.error(message);
-      throw err;
+    } catch {
+      toast.error('Generation failed');
     } finally {
       setIsGenerating(false);
     }

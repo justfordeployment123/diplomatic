@@ -6,7 +6,6 @@ import { LogOut, LayoutDashboard, Wand2, User } from 'lucide-react';
 import { clsx } from 'clsx';
 import { toast } from 'sonner';
 import { useAuthStore } from '@/stores/authStore';
-import { apiClient } from '@/lib/apiClient';
 import Button from '@/components/atoms/Button';
 
 const navLinks = [
@@ -19,12 +18,9 @@ export default function SiteHeader() {
   const router = useRouter();
   const { user, isAuthenticated, clearAuth } = useAuthStore();
 
-  const handleLogout = async () => {
-    try {
-      await apiClient.post('/api/auth/logout');
-    } catch {
-      // ignore — clear auth regardless
-    }
+  const handleLogout = () => {
+    // Clear session cookie + in-memory store
+    document.cookie = 'session=; path=/; max-age=0';
     clearAuth();
     router.push('/login');
     toast.success('Logged out successfully');

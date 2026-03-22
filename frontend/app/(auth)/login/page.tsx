@@ -8,7 +8,7 @@ import { z } from 'zod';
 import { toast } from 'sonner';
 import { useState } from 'react';
 import { useAuthStore } from '@/stores/authStore';
-import { apiClient } from '@/lib/apiClient';
+import { MOCK_USER, MOCK_TOKEN } from '@/lib/mockData';
 import Input from '@/components/atoms/Input';
 import Button from '@/components/atoms/Button';
 
@@ -28,22 +28,16 @@ export default function LoginPage() {
     resolver: zodResolver(schema),
   });
 
-  const onSubmit = async (data: LoginForm) => {
+  const onSubmit = async (_data: LoginForm) => {
     setIsLoading(true);
-    try {
-      const res = await apiClient.post('/api/auth/login', data);
-      setAuth(res.data.user, res.data.token);
-      toast.success('Welcome back!');
-      router.push('/dashboard');
-    } catch (err: unknown) {
-      const message =
-        err && typeof err === 'object' && 'response' in err
-          ? (err as { response?: { data?: { message?: string } } }).response?.data?.message
-          : undefined;
-      toast.error(message || 'Invalid email or password');
-    } finally {
-      setIsLoading(false);
-    }
+    // Mock mode: any valid email + password works
+    await new Promise((r) => setTimeout(r, 600));
+    // Set cookie so server-side protected layout passes
+    document.cookie = 'session=mock; path=/; max-age=86400';
+    setAuth(MOCK_USER, MOCK_TOKEN);
+    toast.success('Welcome back, Ambassador!');
+    router.push('/dashboard');
+    setIsLoading(false);
   };
 
   return (
@@ -51,6 +45,11 @@ export default function LoginPage() {
       <div>
         <h2 className="text-xl font-bold text-navy-900">Sign in</h2>
         <p className="text-sm text-text-muted mt-1">Access your diplomatic documents</p>
+      </div>
+
+      {/* Mock mode hint */}
+      <div className="bg-gold-100 border border-gold-400 rounded-[var(--radius-md)] px-4 py-3 text-sm text-gold-700">
+        <strong>Demo mode:</strong> any email &amp; password works
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">

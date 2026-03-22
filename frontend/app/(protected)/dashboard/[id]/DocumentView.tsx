@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { ArrowLeft, Download, Mail } from 'lucide-react';
 import { format } from 'date-fns';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
 import type { Document } from '@/types/document.types';
 import { useGeneratorStore } from '@/stores/generatorStore';
@@ -36,8 +36,8 @@ export default function DocumentView({ document }: DocumentViewProps) {
   const [emailTo, setEmailTo] = useState('');
   const [emailSubject, setEmailSubject] = useState(document.subject);
 
-  // Pre-populate store for OutputPanel read-only use
-  setOutput(document.content);
+  // Pre-populate store so OutputPanel can read the content
+  useEffect(() => { setOutput(document.content); }, [document.content, setOutput]);
 
   const label = typeLabels[document.type] || document.type;
 

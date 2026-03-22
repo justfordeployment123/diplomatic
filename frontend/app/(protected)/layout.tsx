@@ -4,18 +4,11 @@ import SiteHeader from '@/components/organisms/SiteHeader';
 import SiteFooter from '@/components/organisms/SiteFooter';
 
 export default async function ProtectedLayout({ children }: { children: React.ReactNode }) {
-  // Next.js 16: cookies() is async
+  // Mock mode: just check cookie exists — no backend fetch needed
   const cookieStore = await cookies();
   const session = cookieStore.get('session')?.value;
 
   if (!session) redirect('/login');
-
-  const res = await fetch(`${process.env.API_URL}/api/auth/me`, {
-    headers: { Cookie: `session=${session}` },
-    cache: 'no-store',
-  });
-
-  if (!res.ok) redirect('/login');
 
   return (
     <div className="flex flex-col min-h-screen">

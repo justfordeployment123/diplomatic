@@ -8,7 +8,7 @@ import { z } from 'zod';
 import { toast } from 'sonner';
 import { useState } from 'react';
 import { useAuthStore } from '@/stores/authStore';
-import { apiClient } from '@/lib/apiClient';
+import { MOCK_TOKEN } from '@/lib/mockData';
 import Input from '@/components/atoms/Input';
 import Button from '@/components/atoms/Button';
 
@@ -37,24 +37,16 @@ export default function SignupPage() {
 
   const onSubmit = async (data: SignupForm) => {
     setIsLoading(true);
-    try {
-      const res = await apiClient.post('/api/auth/signup', {
-        name: data.name,
-        email: data.email,
-        password: data.password,
-      });
-      setAuth(res.data.user, res.data.token);
-      toast.success('Account created! Welcome to DiploDocs.');
-      router.push('/dashboard');
-    } catch (err: unknown) {
-      const message =
-        err && typeof err === 'object' && 'response' in err
-          ? (err as { response?: { data?: { message?: string } } }).response?.data?.message
-          : undefined;
-      toast.error(message || 'Signup failed. Please try again.');
-    } finally {
-      setIsLoading(false);
-    }
+    // Mock mode: create user from form data
+    await new Promise((r) => setTimeout(r, 600));
+    document.cookie = 'session=mock; path=/; max-age=86400';
+    setAuth(
+      { id: 'mock-user-1', name: data.name, email: data.email, role: 'user' },
+      MOCK_TOKEN
+    );
+    toast.success('Account created! Welcome to DiploDocs.');
+    router.push('/dashboard');
+    setIsLoading(false);
   };
 
   return (

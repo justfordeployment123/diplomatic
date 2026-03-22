@@ -1,7 +1,6 @@
-import { cookies } from 'next/headers';
 import { notFound } from 'next/navigation';
+import { MOCK_FULL_DOCUMENT } from '@/lib/mockData';
 import DocumentView from './DocumentView';
-import type { Document } from '@/types/document.types';
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -9,19 +8,9 @@ interface Props {
 
 export default async function DocumentPage({ params }: Props) {
   const { id } = await params;
+  const document = MOCK_FULL_DOCUMENT[id];
 
-  const cookieStore = await cookies();
-  const session = cookieStore.get('session')?.value;
-
-  const res = await fetch(`${process.env.API_URL}/api/documents/${id}`, {
-    headers: { Cookie: session ? `session=${session}` : '' },
-    cache: 'no-store',
-  });
-
-  if (res.status === 404) notFound();
-  if (!res.ok) throw new Error('Failed to load document');
-
-  const document: Document = await res.json();
+  if (!document) notFound();
 
   return <DocumentView document={document} />;
 }

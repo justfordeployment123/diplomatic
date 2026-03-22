@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { Copy, Wand2 } from 'lucide-react';
 import { toast } from 'sonner';
-import { apiClient } from '@/lib/apiClient';
+import { MOCK_TONE_IMPROVED } from '@/lib/mockData';
 import Textarea from '@/components/atoms/Textarea';
 import Select from '@/components/atoms/Select';
 import Button from '@/components/atoms/Button';
@@ -21,17 +21,10 @@ export default function ToneImprover() {
     if (!input.trim()) { toast.error('Please enter some text'); return; }
     setIsLoading(true);
     setOutput('');
-    try {
-      const res = await apiClient.post('/api/tone-improve', {
-        text: input,
-        tone: selectedTone,
-      });
-      setOutput(res.data.result || res.data.text || '');
-    } catch {
-      toast.error('Tone improvement failed');
-    } finally {
-      setIsLoading(false);
-    }
+    // Mock mode: simulate processing delay then return sample output
+    await new Promise((r) => setTimeout(r, 1200));
+    setOutput(MOCK_TONE_IMPROVED);
+    setIsLoading(false);
   };
 
   const copyOutput = () => {
