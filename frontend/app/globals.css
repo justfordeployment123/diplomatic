@@ -1,0 +1,183 @@
+@import "tailwindcss";
+
+/* ─── Design Tokens ─────────────────────────────────────────────────── */
+:root {
+  /* Navy scale */
+  --navy-900: #0D1B2A;
+  --navy-800: #162033;
+  --navy-700: #1E2D40;
+  --navy-600: #2B3D52;
+  --navy-400: #4A6180;
+  --navy-200: #8FA8C0;
+  --navy-100: #C8D8E8;
+  --navy-050: #EEF3F8;
+
+  /* Gold accent */
+  --gold-700: #8B6914;
+  --gold-600: #B8890F;
+  --gold-500: #D4A017;
+  --gold-400: #E8B83A;
+  --gold-100: #FAF0D0;
+
+  /* Semantic */
+  --success: #2E7D52;
+  --danger: #B83232;
+  --warning: #C47D12;
+  --info: #1A5B8F;
+
+  /* Surfaces & text */
+  --surface: #F7F9FB;
+  --surface-2: #EEF2F6;
+  --border: #D4DCE6;
+  --border-light: #E8EDF3;
+  --text-primary: #0D1B2A;
+  --text-secondary: #4A6180;
+  --text-muted: #8FA8C0;
+
+  /* Typography — references Next.js font variables injected on <html> */
+  --font-display: var(--font-playfair, 'Playfair Display', Georgia, serif);
+  --font-body:    var(--font-dm-sans, 'DM Sans', system-ui, sans-serif);
+  --font-mono:    var(--font-jetbrains, 'JetBrains Mono', monospace);
+
+  /* Radius */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 3px rgba(13, 27, 42, 0.08);
+  --shadow-md: 0 4px 12px rgba(13, 27, 42, 0.10);
+  --shadow-lg: 0 8px 32px rgba(13, 27, 42, 0.14);
+}
+
+/* ─── Tailwind 4 Theme Extension ────────────────────────────────────── */
+@theme inline {
+  /* Colors */
+  --color-navy-900: var(--navy-900);
+  --color-navy-800: var(--navy-800);
+  --color-navy-700: var(--navy-700);
+  --color-navy-600: var(--navy-600);
+  --color-navy-400: var(--navy-400);
+  --color-navy-200: var(--navy-200);
+  --color-navy-100: var(--navy-100);
+  --color-navy-050: var(--navy-050);
+
+  --color-gold-700: var(--gold-700);
+  --color-gold-600: var(--gold-600);
+  --color-gold-500: var(--gold-500);
+  --color-gold-400: var(--gold-400);
+  --color-gold-100: var(--gold-100);
+
+  --color-success: var(--success);
+  --color-danger: var(--danger);
+  --color-warning: var(--warning);
+  --color-info: var(--info);
+
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-border: var(--border);
+  --color-border-light: var(--border-light);
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-muted: var(--text-muted);
+
+  /* Border radius */
+  --radius-sm: var(--radius-sm);
+  --radius-md: var(--radius-md);
+  --radius-lg: var(--radius-lg);
+  --radius-xl: var(--radius-xl);
+}
+
+/* ─── Base Styles ───────────────────────────────────────────────────── */
+@layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  html {
+    height: 100%;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    min-height: 100%;
+    margin: 0;
+    background-color: var(--surface);
+    color: var(--text-primary);
+    font-family: var(--font-body);
+    font-size: 15px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* ─── Typography ──────────────────────────────────────────────────── */
+  h1, h2 {
+    font-family: var(--font-display);
+    color: var(--text-primary);
+  }
+  h1 { font-size: 32px; line-height: 40px; font-weight: 700; }
+  h2 { font-size: 24px; line-height: 32px; font-weight: 600; }
+  h3 { font-size: 18px; line-height: 28px; font-weight: 600; font-family: var(--font-body); }
+}
+
+/* ─── Utility classes (outside @layer so they beat component styles) ── */
+.label-caps {
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-family: var(--font-body);
+}
+
+.font-mono-custom {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 20px;
+}
+
+/* ─── Focus Ring ────────────────────────────────────────────────────── */
+:focus-visible {
+  outline: 2px solid var(--gold-500);
+  outline-offset: 2px;
+}
+
+/* ─── Scrollbar ─────────────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--surface-2); }
+::-webkit-scrollbar-thumb { background: var(--navy-200); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--navy-400); }
+
+/* ─── Blinking Cursor (streaming) ───────────────────────────────────── */
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+.blink-cursor::after {
+  content: '▋';
+  display: inline;
+  animation: blink 1s step-start infinite;
+  color: var(--gold-500);
+  margin-left: 2px;
+}
+
+/* ─── Gold chip (placeholder tags) ─────────────────────────────────── */
+.placeholder-chip {
+  display: inline-block;
+  background: var(--gold-100);
+  border: 1px solid var(--gold-400);
+  color: var(--gold-700);
+  border-radius: var(--radius-sm);
+  padding: 0 6px;
+  font-size: 13px;
+  font-family: var(--font-mono);
+  cursor: text;
+}
+.placeholder-chip:focus {
+  outline: 2px solid var(--gold-500);
+  background: white;
+}
